@@ -1,0 +1,10 @@
+# Ignorer les données (trop lourd)
+data/
+*.csv
+
+# Ignorer les fichiers temporaires et caches Python
+__pycache__/
+*.ipynb_checkpoints/
+.DS_Store
+.env
+venv/
