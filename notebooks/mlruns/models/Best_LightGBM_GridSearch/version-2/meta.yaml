@@ -1,0 +1,15 @@
+creation_timestamp: 1769092435844
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1769092435844
+model_id: m-019488f1da7b4f3eb50a6e0beb20f184
+name: Best_LightGBM_GridSearch
+run_id: 17ee4e006cfe48e19f11bb33d1e42013
+run_link: null
+source: models:/m-019488f1da7b4f3eb50a6e0beb20f184
+status: READY
+status_message: null
+storage_location: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/models/m-019488f1da7b4f3eb50a6e0beb20f184/artifacts
+user_id: null
+version: 2

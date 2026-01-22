@@ -1,0 +1,10 @@
+artifact_location: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/models/m-3cf7f1f90d114808b75885225c05b7f7/artifacts
+creation_timestamp: 1769089981365
+experiment_id: '617837925006168619'
+last_updated_timestamp: 1769090017671
+model_id: m-3cf7f1f90d114808b75885225c05b7f7
+model_type: null
+name: model
+source_run_id: 8dea83a5102648e99c3546c01bc20c0a
+status: 2
+status_message: null

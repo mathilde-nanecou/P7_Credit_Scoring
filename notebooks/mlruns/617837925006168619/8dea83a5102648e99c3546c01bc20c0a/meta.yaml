@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/8dea83a5102648e99c3546c01bc20c0a/artifacts
+end_time: 1769090017933
+entry_point_name: ''
+experiment_id: '617837925006168619'
+lifecycle_stage: active
+run_id: 8dea83a5102648e99c3546c01bc20c0a
+run_name: GridSearch_LightGBM_Strict
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1769087128602
+status: 3
+tags: []
+user_id: BFXD8246

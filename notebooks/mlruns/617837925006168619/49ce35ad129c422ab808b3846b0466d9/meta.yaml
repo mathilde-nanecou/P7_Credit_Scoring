@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/49ce35ad129c422ab808b3846b0466d9/artifacts
+end_time: 1769079074734
+entry_point_name: ''
+experiment_id: '617837925006168619'
+lifecycle_stage: active
+run_id: 49ce35ad129c422ab808b3846b0466d9
+run_name: LightGBM_Feature_Engineered
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1769078967970
+status: 3
+tags: []
+user_id: BFXD8246

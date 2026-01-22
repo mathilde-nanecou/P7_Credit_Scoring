@@ -1,0 +1,15 @@
+creation_timestamp: 1769071856432
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1769071856432
+model_id: m-81746ee5d5bf410b9aef6efd6cba2e6b
+name: Baseline
+run_id: 763a3a07da7a44a29dd0212024c8ecca
+run_link: null
+source: models:/m-81746ee5d5bf410b9aef6efd6cba2e6b
+status: READY
+status_message: null
+storage_location: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/models/m-81746ee5d5bf410b9aef6efd6cba2e6b/artifacts
+user_id: null
+version: 2

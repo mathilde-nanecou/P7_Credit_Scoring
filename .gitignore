@@ -1,10 +1,18 @@
-# Ignorer les données (trop lourd)
-data/
-*.csv
-
-# Ignorer les fichiers temporaires et caches Python
-__pycache__/
-*.ipynb_checkpoints/
-.DS_Store
-.env
+# Environnement virtuel
+p7_env/
 venv/
+.env
+
+# Fichiers compilés Python
+__pycache__/
+*.pyc
+
+# Gros fichiers de données (Kaggle)
+data/*.csv
+!data/sample_test.csv  # On garde juste le petit échantillon pour le test
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Fichiers système
+.DS_Store

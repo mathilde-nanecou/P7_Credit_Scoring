@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/BFXD8246/Documents/formation_openclassrooms/7_Projet7/notebooks/mlruns/617837925006168619/90c09fd97acd40f08f26698563c278b8/artifacts
+end_time: 1769091643358
+entry_point_name: ''
+experiment_id: '617837925006168619'
+lifecycle_stage: active
+run_id: 90c09fd97acd40f08f26698563c278b8
+run_name: Baseline_Dummy
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1769091630343
+status: 3
+tags: []
+user_id: BFXD8246
