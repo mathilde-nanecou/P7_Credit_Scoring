@@ -1,18 +1,26 @@
-# Environnement virtuel
-p7_env/
-venv/
-.env
+# dossier MLflow
+mlruns/
+notebooks/mlruns/
 
-# Fichiers compilés Python
+# fichiers temporaires Python
 __pycache__/
 *.pyc
 
-# Gros fichiers de données (Kaggle)
-data/*.csv
-!data/sample_test.csv  # On garde juste le petit échantillon pour le test
-
-# Notebook checkpoints
+# sauvegardes automatiques de Notebooks
 .ipynb_checkpoints/
 
-# Fichiers système
-.DS_Store
+
+*- Copie.ipynb
+*.bak
+*.tmp
+
+
+p7_env/
+env/
+venv/
+
+
+#  tous les CSV du dossier data/
+data/*.csv
+
+!data/sample_test.csv
