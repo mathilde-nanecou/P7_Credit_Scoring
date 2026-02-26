@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Configuration des chemins
 MODEL_PATH = 'model_lgbm.pkl'
-DATA_PATH = 'data/sample_test.csv'
+DATA_PATH = 'data/application_test.csv'
 
 # =========================================================
 # 1. CHARGEMENT
