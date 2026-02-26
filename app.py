@@ -51,42 +51,34 @@ def index():
 @app.route('/predict', methods=['GET'])
 def predict():
     client_id = request.args.get('id')
-
-    # Validation
-    if not client_id:
-        return jsonify({'error': 'Paramètre "id" manquant.'}), 400
+    
+    # 1. On récupère la ligne du client
+    client_data = df[df['SK_ID_CURR'] == int(client_id)]
+    
+    if client_data.empty:
+        return jsonify({"error": "Client non trouvé"}), 404
 
     try:
-        client_id = int(client_id)
-    except ValueError:
-        return jsonify({'error': 'L\'ID doit être un entier.'}), 400
-
-    if model is None or df is None:
-        return jsonify({'error': 'Le modèle ou les données ne sont pas chargés.'}), 500
-
-    # Vérification présence ID
-    if client_id not in df.index:
-        return jsonify({'error': f'Client ID {client_id} non trouvé dans la base de test.'}), 404
-
-    # Prédiction
-    try:
-        client_data = df.loc[[client_id]]
+        # 2. NETTOYAGE : On ne garde que les colonnes numériques
+        # Le modèle plante car il voit des colonnes "objet" (texte)
+        client_data_clean = client_data.select_dtypes(exclude=['object'])
         
-        proba = model.predict_proba(client_data)[:, 1][0]
-        
-        threshold = 0.50
-        decision = "Refusé" if proba > threshold else "Accordé"
+        # 3. On enlève aussi l'ID qui ne doit pas servir à la prédiction
+        if 'SK_ID_CURR' in client_data_clean.columns:
+            client_data_clean = client_data_clean.drop(columns=['SK_ID_CURR'])
 
+        # 4. Prédiction
+        probability = model.predict_proba(client_data_clean)[0][1]
+        
+        # ... la suite de ton code (seuil, décision, etc.) ...
         return jsonify({
-            'client_id': client_id,
-            'probability': round(float(proba), 3),
-            'decision': decision,
-            'threshold': threshold
+            "probability": float(probability),
+            "decision": "Refusé" if probability > 0.5 else "Accordé",
+            "threshold": 0.5
         })
 
     except Exception as e:
-        return jsonify({'error': f'Erreur de prédiction : {str(e)}'}), 500
-
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
