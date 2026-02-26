@@ -50,35 +50,53 @@ def index():
 
 @app.route('/predict', methods=['GET'])
 def predict():
+    # 1. Récupération de l'ID depuis l'URL (ex: ?id=100001)
     client_id = request.args.get('id')
     
-    # 1. On récupère la ligne du client
-    client_data = df[df['SK_ID_CURR'] == int(client_id)]
-    
-    if client_data.empty:
-        return jsonify({"error": "Client non trouvé"}), 404
+    if not client_id:
+        return jsonify({"error": "ID client manquant"}), 400
+
+    # 2. Recherche du client dans le fichier application_test.csv
+    try:
+        # On force la conversion en entier pour la comparaison
+        id_int = int(client_id)
+        client_row = df[df['SK_ID_CURR'] == id_int]
+    except ValueError:
+        return jsonify({"error": "ID client doit être un nombre"}), 400
+
+    if client_row.empty:
+        return jsonify({"error": f"Client ID {client_id} non trouvé dans la base de test."}), 404
 
     try:
-        # 2. NETTOYAGE : On ne garde que les colonnes numériques
-        # Le modèle plante car il voit des colonnes "objet" (texte)
-        client_data_clean = client_data.select_dtypes(exclude=['object'])
+        # 3. NETTOYAGE CRUCIAL : On prépare les données pour le modèle
+        # On ne garde que les colonnes numériques (int, float, bool)
+        client_data_clean = client_row.select_dtypes(exclude=['object'])
         
-        # 3. On enlève aussi l'ID qui ne doit pas servir à la prédiction
+        # On supprime l'ID car il ne doit pas être une "feature" pour la prédiction
         if 'SK_ID_CURR' in client_data_clean.columns:
             client_data_clean = client_data_clean.drop(columns=['SK_ID_CURR'])
 
-        # 4. Prédiction
+        # 4. CALCUL DE LA PRÉDICTION
+        # model.predict_proba renvoie [[proba_classe_0, proba_classe_1]]
+        # On récupère la probabilité de défaut (classe 1)
         probability = model.predict_proba(client_data_clean)[0][1]
         
-        # ... la suite de ton code (seuil, décision, etc.) ...
+        # Définition du seuil (à ajuster selon tes besoins métier)
+        threshold = 0.5
+        decision = "Refusé" if probability > threshold else "Accordé"
+
+        # 5. RETOUR DES RÉSULTATS EN JSON
         return jsonify({
+            "status": "success",
+            "client_id": id_int,
             "probability": float(probability),
-            "decision": "Refusé" if probability > 0.5 else "Accordé",
-            "threshold": 0.5
+            "decision": decision,
+            "threshold": threshold
         })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # En cas d'erreur interne (modèle manquant, colonnes incompatibles, etc.)
+        return jsonify({"error": f"Erreur de prédiction : {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
