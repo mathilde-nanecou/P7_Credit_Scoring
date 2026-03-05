@@ -5,6 +5,7 @@ import os
 
 app = Flask(__name__)
 
+# Configuration des chemins
 MODEL_PATH = 'model_lgbm.pkl'
 DATA_PATH = 'data/application_test.csv'
 
@@ -13,6 +14,7 @@ DATA_PATH = 'data/application_test.csv'
 # =========================================================
 print("⏳ Démarrage de l'API...")
 
+# A. Chargement du Modèle
 try:
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
@@ -21,15 +23,19 @@ except Exception as e:
     print(f"❌ Erreur modèle: {e}")
     model = None
 
+# B. Chargement des Données
 try:
-    # On charge sans index_col pour garder SK_ID_CURR comme une colonne normale
+    # CORRECTION : On ne met pas index_col=0 pour garder SK_ID_CURR comme colonne
     df = pd.read_csv(DATA_PATH)
+    
     if 'TARGET' in df.columns:
         df = df.drop(columns=['TARGET'])
-    print(f"✅ Données chargées : {df.shape}")
+        
+    print(f"✅ Données clients chargées ({df.shape[0]} entrées)")
 except Exception as e:
     print(f"❌ Erreur données: {e}")
     df = None
+
 
 # =========================================================
 # 2. ROUTES
@@ -42,31 +48,31 @@ def index():
 @app.route('/predict', methods=['GET'])
 def predict():
     client_id = request.args.get('id')
+    
     if not client_id:
         return jsonify({"error": "ID client manquant"}), 400
 
     try:
         id_int = int(client_id)
-        # On cherche le client
+        # Recherche du client (Fonctionnera car SK_ID_CURR est une colonne)
         client_row = df[df['SK_ID_CURR'] == id_int]
-    except Exception:
-        return jsonify({"error": "ID invalide"}), 400
+    except ValueError:
+        return jsonify({"error": "ID client doit être un nombre"}), 400
 
     if client_row.empty:
-        return jsonify({"error": f"Client {client_id} non trouvé"}), 404
+        return jsonify({"error": f"Client ID {client_id} non trouvé"}), 404
 
     try:
-        # Nettoyage des colonnes texte
+        # NETTOYAGE : Suppression des colonnes texte pour le modèle
         client_data_clean = client_row.select_dtypes(exclude=['object'])
         
-        # Suppression de l'ID pour ne pas polluer la prédiction
+        # On retire l'ID des features de prédiction
         if 'SK_ID_CURR' in client_data_clean.columns:
             client_data_clean = client_data_clean.drop(columns=['SK_ID_CURR'])
 
-        # Prédiction
+        # CALCUL DE LA PRÉDICTION
         probability = model.predict_proba(client_data_clean)[0][1]
         
-        # Seuil métier (0.5 ou celui que tu as optimisé)
         threshold = 0.5
         decision = "Refusé" if probability > threshold else "Accordé"
 
@@ -77,10 +83,11 @@ def predict():
             "decision": decision,
             "threshold": threshold
         })
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Erreur de prédiction : {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # Indispensable pour Render : utiliser le port défini par l'environnement
+    # Utilisation du port d'environnement pour Render
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
