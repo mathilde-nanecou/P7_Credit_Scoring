@@ -88,6 +88,7 @@ def predict():
         return jsonify({"error": f"Erreur de prédiction : {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # Utilisation du port d'environnement pour Render
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    # On récupère le port dynamique de Render
+    port = int(os.environ.get("PORT", 10000))
+    # '0.0.0.0' est INDISPENSABLE pour que Render puisse voir l'API
+    app.run(host='0.0.0.0', port=port, debug=False)
