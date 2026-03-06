@@ -25,17 +25,13 @@ except Exception as e:
 
 # B. Chargement des Données
 try:
-    # CORRECTION : On ne met pas index_col=0 pour garder SK_ID_CURR comme colonne
     df = pd.read_csv(DATA_PATH)
-    
     if 'TARGET' in df.columns:
         df = df.drop(columns=['TARGET'])
-        
     print(f"✅ Données clients chargées ({df.shape[0]} entrées)")
 except Exception as e:
     print(f"❌ Erreur données: {e}")
     df = None
-
 
 # =========================================================
 # 2. ROUTES
@@ -54,7 +50,6 @@ def predict():
 
     try:
         id_int = int(client_id)
-        # Recherche du client (Fonctionnera car SK_ID_CURR est une colonne)
         client_row = df[df['SK_ID_CURR'] == id_int]
     except ValueError:
         return jsonify({"error": "ID client doit être un nombre"}), 400
@@ -63,15 +58,19 @@ def predict():
         return jsonify({"error": f"Client ID {client_id} non trouvé"}), 404
 
     try:
-        # NETTOYAGE : Suppression des colonnes texte pour le modèle
+        # 1. NETTOYAGE : On enlève le texte
         client_data_clean = client_row.select_dtypes(exclude=['object'])
         
-        # On retire l'ID des features de prédiction
-        if 'SK_ID_CURR' in client_data_clean.columns:
-            client_data_clean = client_data_clean.drop(columns=['SK_ID_CURR'])
+        # 2. FILTRE MAGIQUE : On force l'alignement sur les 261 colonnes du modèle
+        # On récupère les noms des colonnes utilisées lors de l'entraînement
+        expected_features = model.feature_name_
+        
+        # On ne garde que ces colonnes. Si une manque, on met 0. Si on en a trop (647), on les jette.
+        client_data_final = client_data_clean.reindex(columns=expected_features, fill_value=0)
 
-        # CALCUL DE LA PRÉDICTION
-        probability = model.predict_proba(client_data_clean)[0][1]
+        # 3. CALCUL DE LA PRÉDICTION
+        # On utilise bien 'client_data_final' qui a exactement 261 colonnes
+        probability = model.predict_proba(client_data_final)[0][1]
         
         threshold = 0.5
         decision = "Refusé" if probability > threshold else "Accordé"
@@ -88,7 +87,5 @@ def predict():
         return jsonify({"error": f"Erreur de prédiction : {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # On récupère le port dynamique de Render
     port = int(os.environ.get("PORT", 10000))
-    # '0.0.0.0' est INDISPENSABLE pour que Render puisse voir l'API
     app.run(host='0.0.0.0', port=port, debug=False)
