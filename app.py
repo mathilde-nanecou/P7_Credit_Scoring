@@ -58,18 +58,17 @@ def predict():
         return jsonify({"error": f"Client ID {client_id} non trouvé"}), 404
 
     try:
-        # 1. NETTOYAGE : On enlève le texte
+        # 1. NETTOYAGE : Suppression des colonnes texte
         client_data_clean = client_row.select_dtypes(exclude=['object'])
         
-        # 2. FILTRE MAGIQUE : On force l'alignement sur les 261 colonnes du modèle
-        # On récupère les noms des colonnes utilisées lors de l'entraînement
+        # 2. ALIGNEMENT : On force les données à avoir les 261 colonnes du modèle
+        # On récupère la liste des colonnes attendues directement depuis le modèle chargé
         expected_features = model.feature_name_
         
-        # On ne garde que ces colonnes. Si une manque, on met 0. Si on en a trop (647), on les jette.
+        # .reindex() va garder les bonnes colonnes et mettre 0 si une colonne manque
         client_data_final = client_data_clean.reindex(columns=expected_features, fill_value=0)
 
-        # 3. CALCUL DE LA PRÉDICTION
-        # On utilise bien 'client_data_final' qui a exactement 261 colonnes
+        # 3. PRÉDICTION : On utilise maintenant le DataFrame filtré à 261 colonnes
         probability = model.predict_proba(client_data_final)[0][1]
         
         threshold = 0.5
@@ -84,6 +83,7 @@ def predict():
         })
 
     except Exception as e:
+        # En cas d'erreur, on affiche le message pour comprendre si besoin
         return jsonify({"error": f"Erreur de prédiction : {str(e)}"}), 500
 
 if __name__ == '__main__':
