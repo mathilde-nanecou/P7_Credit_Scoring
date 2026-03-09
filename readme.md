@@ -95,4 +95,4 @@ Le dashboard Streamlit permet :
 * **Note Méthodologique :** Disponible dans le dossier `docs/`.
 
 ---
-*Projet réalisé par Mathilde - Parcours Data Scientist @ OpenClassrooms*
+*Projet réalisé par Mathilde Nanécou - Parcours Data Scientist @ OpenClassrooms*
