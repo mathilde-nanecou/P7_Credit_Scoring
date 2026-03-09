@@ -7,7 +7,7 @@ import seaborn as sns
 # -----------------------------------------------------------
 # 1. CONFIGURATION ET CHARGEMENT DES DONNÉES RÉELLES
 # -----------------------------------------------------------
-API_URL = "https://api-scoring-mathilde.onrender.com" 
+API_URL = "https://api-scoring-mathilde.onrender.com/predict"
 
 st.set_page_config(page_title="Dashboard Scoring Crédit", layout="wide")
 
