@@ -1,4 +1,9 @@
 Flask
+matplotlib
+streamlit
+requests
+matplotlib
+seaborn
 pandas
 numpy
 lightgbm
